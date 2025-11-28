@@ -14,12 +14,14 @@ const { Builder, By, until } = require('selenium-webdriver');
     let errorText = await errorElement.getText();
         let expectedText = "Epic sadface: Username and password do not match any user in this service";
     if(errorText === expectedText) {
+      console.log("Validacion de Credenciales Incorrectas. Login_error.js");
       console.log("Mensaje de error validado correctamente.");
     } else {
+      console.log("Validacion de Credenciales Incorrectas. Login_error.js");
       console.log("Mensaje de error inesperado: ", errorText);
     }
 
-    console.log (expectedText);
+    console.log ("");
 
   } finally {
     await driver.quit(); // cerrar navegador si quieres
