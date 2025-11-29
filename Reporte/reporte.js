@@ -2,9 +2,13 @@ const { Builder, By, until } = require('selenium-webdriver');
 const fs = require('fs');
 const path = require('path');
 
-  const rutaArchivo = path.join(__dirname, 'data', 'fixture', 'Usuarios.json');
-  const datosJSON = ft.readFileSync(rutaArchivo, 'utf8');
-  const usuarios = JSON.parse(datosJSON);
+const path2 = require('path');
+const user_data = require(path2.join(__dirname,'..', 'data', 'fixtures', 'usuarios.js'));
+const user_1 = user_data.Bueno.Usuario;
+const pass_1 = user_data.Bueno.Password;
+const user_2 = user_data.Malo.Usuario;
+const pass_2 = user_data.Malo.Password;
+
 
 
 let resultados = [];
@@ -49,8 +53,8 @@ function generarReporteHTML() {
   let driver = await new Builder().forBrowser('firefox').build();
   try {
     await driver.get('https://www.saucedemo.com/');
-    await driver.findElement(By.id('user-name')).sendKeys(usuarios.bueno.nombre);
-    await driver.findElement(By.id('password')).sendKeys(usuarios.bueno.nombre);
+    await driver.findElement(By.id('user-name')).sendKeys(user_1);
+    await driver.findElement(By.id('password')).sendKeys(pass_1);
     await driver.findElement(By.id('login-button')).click();
 
     //Setting Validaoion Login
