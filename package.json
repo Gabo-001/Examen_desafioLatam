@@ -19,9 +19,12 @@
   },
   "homepage": "https://github.com/Gabo-001/Examen_desafioLatam#readme",
   "dependencies": {
+    "@wdio/cli": "^9.21.1",
     "assert": "^2.1.0",
     "chai": "^6.2.1",
     "mochawesome": "^7.1.4",
+    "open": "^11.0.0",
+    "puppeteer": "^24.31.0",
     "selenium-webdriver": "^4.38.0"
   },
   "devDependencies": {

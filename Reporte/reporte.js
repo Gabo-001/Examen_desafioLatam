@@ -1,4 +1,5 @@
-const { Builder, By, until } = require('selenium-webdriver');
+const { Builder, By, Key } = require('selenium-webdriver');
+const firefox = require('selenium-webdriver/firefox')
 const fs = require('fs');
 const path = require('path');
 
@@ -8,7 +9,9 @@ const user_1 = user_data.Bueno.Usuario;
 const pass_1 = user_data.Bueno.Password;
 const user_2 = user_data.Malo.Usuario;
 const pass_2 = user_data.Malo.Password;
-
+const msg_data = require(path2.join(__dirname,'..', 'data', 'fixtures', 'message.js'));
+const msg_1 = msg_data.no_access.msg;
+const msg_2 = msg_data.Invalid_login.msg;
 
 
 let resultados = [];
@@ -50,7 +53,9 @@ function generarReporteHTML() {
 }
 
 (async function openPortal() {
-  let driver = await new Builder().forBrowser('firefox').build();
+  let options = new firefox.Options();
+  let driver = await new Builder().forBrowser('firefox').setFirefoxOptions(options).build();
+  
   try {
     await driver.get('https://www.saucedemo.com/');
     await driver.findElement(By.id('user-name')).sendKeys(user_1);
@@ -82,7 +87,6 @@ function generarReporteHTML() {
 
     let menu4 = await driver.findElement(By.css('#reset_sidebar_link'));
     let text_menu4 = await menu4.getText();
-    await new Promise(resolve => setTimeout(resolve, 3000))
     // Cierre Setting Validacion Menu Hamburguesa
 
     const screenshotPath = `./screenshots/test_sidebar_${Date.now()}.png`;
@@ -91,14 +95,57 @@ function generarReporteHTML() {
       fs.writeFileSync(screenshotPath, data, 'base64');
     });
 
-    //Validacion Login
+    //Logout
+    await driver.findElement(By.css('#logout_sidebar_link')).click();
+    let logout_x = await driver.findElement(By.css('#root > div > div.login_logo'));
+    let text_logout = await logout_x.getText();
+    let tituloSalida = "Swag Labs";
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
+    const screenshotPath2 = `./screenshots/test_Logout_${Date.now()}.png`;
+    await driver.takeScreenshot().then(data => {
+      fs.mkdirSync('./screenshots', { recursive: true });
+      fs.writeFileSync(screenshotPath2, data, 'base64');
+    });
+
+    await driver.findElement(By.id('user-name')).sendKeys(user_2);
+    await driver.findElement(By.id('password')).sendKeys(pass_2);
+    await driver.findElement(By.id('login-button')).click();
+
+    let error_message = await driver.findElement(By.xpath('/html/body/div/div/div[2]/div[1]/div/div/form/div[3]/h3'))
+    let errorText = await error_message.getText();
+    //let expectedText = "Epic sadface: Username and password do not match any user in this service";
+
+    const screenshotPath3 = `./screenshots/test_Login_error_${Date.now()}.png`;
+    await driver.takeScreenshot().then(data => {
+      fs.mkdirSync('./screenshots', { recursive: true });
+      fs.writeFileSync(screenshotPath3, data, 'base64');
+    });
+   
+    //Ingresar directo a URL sin login
+    await driver.manage().deleteAllCookies();
+    await new Promise(resolve => setTimeout(resolve, 3000))
+    await driver.get('https://www.saucedemo.com/inventory.html');
+    //await new Promise(resolve => setTimeout(resolve, 3000))
+
+    let errorURL = await driver.findElement(By.xpath('/html/body/div/div/div[2]/div[1]/div/div/form/div[3]/h3'))
+    let URLText = await errorURL.getText();
+    
+    const screenshotPath4 = `./screenshots/test_URL_sin login_${Date.now()}.png`;
+    await driver.takeScreenshot().then(data => {
+     fs.mkdirSync('./screenshots', { recursive: true });
+     fs.writeFileSync(screenshotPath4, data, 'base64');
+    });
+    
+
+    //Reporte Login
     if(Text_tittle === tituloEsperado) {
       agregarResultado('Login Pagina Principal', 'PASSED', `Texto: "${Text_tittle}"`, screenshotPath);
     } else {
       agregarResultado('Login Pagina Principal', 'FAILED', `Texto encontrado: "${Text_tittle}"`, screenshotPath);
     }
 
-    //Validacion Menu Hamburguesa
+    //Reporte Menu Hamburguesa
     if (text_menu1 === "All Items") {
       agregarResultado('Validar Sidebar All Items', 'PASSED', `Texto: "${text_menu1}"`, screenshotPath);
     } else {
@@ -119,6 +166,28 @@ function generarReporteHTML() {
     } else {
       agregarResultado('Validar Sidebar Reset App State', 'FAILED', `Texto encontrado: "${text_menu4}"`, screenshotPath);
     }
+
+    //Reporte Logout
+    if(text_logout === tituloSalida) {
+      agregarResultado('Logout Exitoso', 'PASSED', `Texto: "${text_logout}"`, screenshotPath2);
+    } else {
+      agregarResultado('Login Error', 'FAILED', `Texto encontrado: "${text_logout}"`, screenshotPath2);
+    }
+    //Reporte Login Error
+    if(errorText === msg_1) {
+      agregarResultado('Login Error Valido', 'PASSED', `Texto: "${errorText}"`, screenshotPath);
+    } else {
+      agregarResultado('Login Error Invalido', 'FAILED', `Texto encontrado: "${errorText}"`, screenshotPath);
+    }
+    
+
+    if(URLText === msg_2) {
+      agregarResultado('Login Error Valido', 'PASSED', `Texto: "${URLText}"`, screenshotPath);
+    } else {
+      agregarResultado('Login Error Invalido', 'FAILED', `Texto encontrado: "${URLText}"`, screenshotPath);
+    }
+
+
   } catch (err) {
     agregarResultado('Prueba general', 'FAILED', err.message);
   } finally {

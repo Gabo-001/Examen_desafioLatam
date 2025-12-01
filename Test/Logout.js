@@ -10,7 +10,7 @@ const { Builder, By, until } = require('selenium-webdriver');
     await driver.findElement(By.id('login-button')).click();
 
      await driver.findElement(By.id('react-burger-menu-btn')).click();
-         await new Promise(resolve => setTimeout(resolve, 2000));
+     await new Promise(resolve => setTimeout(resolve, 2000));
     
     // Raelizar Logout
    
