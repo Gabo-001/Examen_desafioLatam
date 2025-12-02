@@ -13,7 +13,6 @@ const msg_data = require(path2.join(__dirname,'..', 'data', 'fixtures', 'message
 const msg_1 = msg_data.no_access.msg;
 const msg_2 = msg_data.Invalid_login.msg;
 
-
 let resultados = [];
 
 function agregarResultado(nombreTest, estado, detalles = '', screenshotPath = '') {
@@ -75,6 +74,7 @@ function generarReporteHTML() {
     });
 
     await driver.findElement(By.id('react-burger-menu-btn')).click();
+    await new Promise(resolve => setTimeout(resolve, 1000))
     // Setting Validacion Menu Hamburguesa
     let menu1 = await driver.findElement(By.css('#inventory_sidebar_link'));
     let text_menu1 = await menu1.getText();
@@ -140,9 +140,9 @@ function generarReporteHTML() {
 
     //Reporte Login
     if(Text_tittle === tituloEsperado) {
-      agregarResultado('Login Pagina Principal', 'PASSED', `Texto: "${Text_tittle}"`, screenshotPath);
+      agregarResultado('Login Pagina Principal', 'PASSED', `Texto: "${Text_tittle}"`, screenshotPath1);
     } else {
-      agregarResultado('Login Pagina Principal', 'FAILED', `Texto encontrado: "${Text_tittle}"`, screenshotPath);
+      agregarResultado('Login Pagina Principal', 'FAILED', `Texto encontrado: "${Text_tittle}"`, screenshotPath1);
     }
 
     //Reporte Menu Hamburguesa
@@ -175,16 +175,16 @@ function generarReporteHTML() {
     }
     //Reporte Login Error
     if(errorText === msg_1) {
-      agregarResultado('Login Error Valido', 'PASSED', `Texto: "${errorText}"`, screenshotPath);
+      agregarResultado('Login Error Valido', 'PASSED', `Texto: "${errorText}"`, screenshotPath3);
     } else {
-      agregarResultado('Login Error Invalido', 'FAILED', `Texto encontrado: "${errorText}"`, screenshotPath);
+      agregarResultado('Login Error Invalido', 'FAILED', `Texto encontrado: "${errorText}"`, screenshotPath3);
     }
     
-
+//Reporte NO access Page
     if(URLText === msg_2) {
-      agregarResultado('Login Error Valido', 'PASSED', `Texto: "${URLText}"`, screenshotPath);
+      agregarResultado('No tienes acceso debes hacer login antes', 'PASSED', `Texto: "${URLText}"`, screenshotPath4);
     } else {
-      agregarResultado('Login Error Invalido', 'FAILED', `Texto encontrado: "${URLText}"`, screenshotPath);
+      agregarResultado('mensaje detectado invalido', 'FAILED', `Texto encontrado: "${URLText}"`, screenshotPath4);
     }
 
 
